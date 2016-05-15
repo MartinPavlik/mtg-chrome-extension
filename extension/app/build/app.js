@@ -21265,21 +21265,9 @@
 	  },
 	  handleUseCheapest: function handleUseCheapest(e) {
 	    e.preventDefault();
+	    var useCheapest = this.props.useCheapest;
 
-	    var cardLen = this.state.items.length;
-
-	    for (var i = 0; i < cardLen; i++) {
-	      var mutLen = this.state.items[i].mutations.length;
-	      console.info('card', i, this.state.items[i], mutLen);
-	      var count = this.state.items[i].count;
-	      for (var j = mutLen - 1; j >= 0 && this.state.items[i].orderedCount < count; j--) {
-	        console.log("\tmutation: ", j, this.state.items[i].mutations[j]);
-	        for (var k = 0; k < this.state.items[i].mutations[j].count && this.state.items[i].orderedCount < count; k++) {
-	          console.log("\t\tordering: ");
-	          this.handleAddToCart(this.state.items[i].mutations[j], this.state.items[i]);
-	        }
-	      }
-	    }
+	    useCheapest();
 	  },
 	  handleAddToCart: function handleAddToCart(mutation, card) {
 	    if (mutation.orderedCount == mutation.count) return;
@@ -21287,11 +21275,11 @@
 
 	    addToCart(mutation, card);
 	  },
-	  handleRemoveFromCart: function handleRemoveFromCart(item, card) {
-	    item.orderedCount--;
-	    card.orderedCount--;
-	    this.state.totalPrice -= item.price;
-	    this.setState(this.state);
+	  handleRemoveFromCart: function handleRemoveFromCart(mutation, card) {
+	    if (mutation.orderedCount == 0) return;
+	    var removeFromCart = this.props.removeFromCart;
+
+	    removeFromCart(mutation, card);
 	  },
 	  getHeaderText: function getHeaderText() {
 	    if (this.state.loadingStatus == LOADING_STATUS.NOT_LOADED) return 'Import cards';
@@ -21304,6 +21292,7 @@
 	    var loadingStatus = _props.loadingStatus;
 	    var loaded = _props.loaded;
 	    var toBeLoaded = _props.toBeLoaded;
+	    var totalPrice = _props.totalPrice;
 
 	    return _react2.default.createElement(
 	      'div',
@@ -21359,6 +21348,15 @@
 	          _reactBootstrap.Button,
 	          { bsStyle: 'primary', bsSize: 'lg', type: 'submit' },
 	          'Do the magic'
+	        )
+	      ),
+	      loadingStatus == LOADING_STATUS.LOADED && _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          _reactBootstrap.Button,
+	          { bsStyle: 'primary', bsSize: 'lg', onClick: this.handleOrder },
+	          'Confirm & order these cards, total: ' + totalPrice + ',-'
 	        )
 	      )
 	    );
@@ -38784,7 +38782,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.REMOVE_FROM_CART = exports.ADD_TO_CART = exports.TOGGLE_EXPAND_CARD = exports.USE_CHEAPEST = exports.ORDER_CARDS_DONE = exports.ORDER_CARDS_REQUEST = exports.CARD_LOADED = exports.LOAD_CARDS_DONE = exports.LOAD_CARDS_REQUEST = undefined;
+	exports.REMOVE_FROM_CART = exports.ADD_TO_CART = exports.TOGGLE_EXPAND_CARD = exports.ORDER_CARDS_DONE = exports.ORDER_CARDS_REQUEST = exports.CARD_LOADED = exports.LOAD_CARDS_DONE = exports.LOAD_CARDS_REQUEST = undefined;
 	exports.loadCardsRequest = loadCardsRequest;
 	exports.loadCardsDone = loadCardsDone;
 	exports.cardLoaded = cardLoaded;
@@ -38804,8 +38802,6 @@
 
 	var ORDER_CARDS_REQUEST = exports.ORDER_CARDS_REQUEST = 'ORDER_CARDS_REQUEST';
 	var ORDER_CARDS_DONE = exports.ORDER_CARDS_DONE = 'ORDER_CARDS_DONE';
-
-	var USE_CHEAPEST = exports.USE_CHEAPEST = 'USE_CHEAPEST';
 
 	var TOGGLE_EXPAND_CARD = exports.TOGGLE_EXPAND_CARD = 'CARD_EXPAND';
 
@@ -38862,7 +38858,36 @@
 	  };
 	}
 
-	function useCheapest() {}
+	function useCheapest() {
+	  return function (dispatch, getState) {
+	    var orderList = [];
+	    var items = getState()['cards'].items;
+
+	    var cardLen = items.length;
+	    for (var i = 0; i < cardLen; i++) {
+	      var mutLen = items[i].mutations.length;
+	      console.info('card', i, items[i], mutLen);
+	      // How many cards wants a user to order?
+	      var maxOrderedCards = items[i].count;
+	      var currentlyOrdered = items[i].orderedCount;
+	      console.info('maxOrderedCards: ', maxOrderedCards);
+	      for (var j = mutLen - 1; j >= 0 && currentlyOrdered < maxOrderedCards; j--) {
+	        console.log("\tmutation: ", j, items[i].mutations[j]);
+	        for (var k = 0; k < items[i].mutations[j].count && currentlyOrdered < maxOrderedCards; k++) {
+	          console.log("\t\tordering: ");
+	          orderList.push({
+	            mutation: items[i].mutations[j],
+	            card: items[i]
+	          });
+	          currentlyOrdered++;
+	        }
+	      }
+	    }
+	    orderList.forEach(function (item) {
+	      dispatch(addToCart(item.mutation, item.card));
+	    });
+	  };
+	}
 
 	function toggleCardExpand(id) {
 	  return {

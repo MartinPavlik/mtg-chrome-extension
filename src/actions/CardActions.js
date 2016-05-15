@@ -8,8 +8,6 @@ export const CARD_LOADED = 'CARD_LOADED';
 export const ORDER_CARDS_REQUEST = 'ORDER_CARDS_REQUEST';
 export const ORDER_CARDS_DONE = 'ORDER_CARDS_DONE';
 
-export const USE_CHEAPEST = 'USE_CHEAPEST';
-
 export const TOGGLE_EXPAND_CARD = 'CARD_EXPAND';
 
 export const ADD_TO_CART = 'ADD_TO_CART';
@@ -64,7 +62,38 @@ export function orderCardsDone() {
 }
 
 export function useCheapest() {
-
+  return (dispatch, getState) => {
+    const orderList = [];
+    const {items} = getState()['cards']
+    const cardLen = items.length;
+    for(var i = 0; i < cardLen; i++) {
+      const mutLen = items[i].mutations.length;
+      console.info('card', i, items[i], mutLen);
+      // How many cards wants a user to order?
+      const maxOrderedCards = items[i].count;
+      let currentlyOrdered = items[i].orderedCount
+      console.info('maxOrderedCards: ', maxOrderedCards)
+      for(var j = mutLen - 1; j >= 0 && currentlyOrdered < maxOrderedCards; j--) {
+        console.log("\tmutation: ", j, items[i].mutations[j]);
+        for(var k = 0; k < items[i].mutations[j].count && currentlyOrdered < maxOrderedCards; k++) {
+          console.log("\t\tordering: ");
+          orderList.push({
+            mutation: items[i].mutations[j],
+            card: items[i]
+          })
+          currentlyOrdered++;
+        }
+      }
+    }
+    orderList.forEach(item => {
+      dispatch(
+        addToCart(
+          item.mutation,
+          item.card
+        )
+      );
+    })
+  }
 }
 
 export function toggleCardExpand(id) {

@@ -132,21 +132,8 @@ const App = React.createClass({
 
   handleUseCheapest (e) {
     e.preventDefault();
-
-    var cardLen = this.state.items.length;
-
-    for(var i = 0; i < cardLen; i++) {
-      var mutLen = this.state.items[i].mutations.length;
-      console.info('card', i, this.state.items[i], mutLen);
-      var count = this.state.items[i].count;
-      for(var j = mutLen - 1; j >= 0 && this.state.items[i].orderedCount < count; j--) {
-        console.log("\tmutation: ", j, this.state.items[i].mutations[j]);
-        for(var k = 0; k < this.state.items[i].mutations[j].count && this.state.items[i].orderedCount < count; k++) {
-          console.log("\t\tordering: ");
-          this.handleAddToCart(this.state.items[i].mutations[j], this.state.items[i]);
-        }
-      }
-    }
+    const { useCheapest } = this.props
+    useCheapest()
   },
 
   handleAddToCart (mutation, card) {
@@ -154,14 +141,13 @@ const App = React.createClass({
       return
     const { addToCart } = this.props
     addToCart(mutation, card);
-
   },
 
-  handleRemoveFromCart (item, card) {
-    item.orderedCount--;
-    card.orderedCount--;
-    this.state.totalPrice -= item.price;
-    this.setState(this.state);
+  handleRemoveFromCart (mutation, card) {
+    if(mutation.orderedCount == 0)
+      return
+    const { removeFromCart } = this.props
+    removeFromCart(mutation, card);
   },
 
   getHeaderText () {
@@ -173,7 +159,7 @@ const App = React.createClass({
   },
 
   render () {
-    const { items, loadingStatus, loaded, toBeLoaded } = this.props
+    const { items, loadingStatus, loaded, toBeLoaded, totalPrice} = this.props
     return (
       <div>
         <div className="row">
@@ -212,6 +198,13 @@ const App = React.createClass({
               Do the magic
             </Button>
           </form>
+        }
+        {loadingStatus == LOADING_STATUS.LOADED &&
+          <div>
+            <Button bsStyle="primary" bsSize="lg" onClick={this.handleOrder}>
+              {'Confirm & order these cards, total: ' + totalPrice + ',-'}
+            </Button>
+          </div>
         }
       </div>
     )
