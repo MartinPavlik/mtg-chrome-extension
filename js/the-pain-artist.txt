@@ -1,0 +1,133 @@
+﻿//Artifact (16)
+1 Alhammarret's Archive
+1 Caged Sun
+1 Empyrial Plate
+1 Everflowing Chalice
+1 Glaring Spotlight
+1 Gorgon's Head
+1 Hedron Archive
+1 Ivory Tower
+1 Izzet Signet
+1 Lightning Greaves
+1 Neurok Stealthsuit
+1 Sol Ring
+1 Staff of Nin
+1 Swiftfoot Boots
+1 Thousand-Year Elixir
+1 Venser's Journal
+
+//Artifact Creature (4)
+1 Burnished Hart
+1 Darksteel Myr
+1 Psychosis Crawler
+1 Stuffy Doll
+
+//Creature (19)
+1 Aeon Chronicler
+1 Aphetto Alchemist
+1 Apprentice Wizard
+1 Arcanis the Omnipotent
+1 Archaeomancer
+1 Dack's Duplicate
+1 Daring Apprentice
+1 Disruptive Student
+1 Graceful Adept
+1 Izzet Staticaster
+1 Mercurial Chemister
+1 Mogg Maniac
+1 Nin, the Pain Artist
+1 Niv-Mizzet, Dracogenius
+1 Niv-Mizzet, the Firemind
+1 Soramaro, First to Dream
+1 Sturmgeist
+1 Trinket Mage
+1 Viashino Heretic
+
+//Enchantment (4)
+1 Clout of the Dominus
+1 Honden of Seeing Winds
+1 Mind Unbound
+1 Thought Reflection
+
+//Enchantment Creature (2)
+1 Archetype of Imagination
+1 Thassa, God of the Sea
+
+//Instant (14)
+1 Blue Sun's Zenith
+1 Brainstorm
+1 Capsize
+1 Counterflux
+1 Cyclonic Rift
+1 Echoing Truth
+1 Evacuation
+1 Into the Roil
+1 Pongify
+1 Rapid Hybridization
+1 Rewind
+1 Runeflare Trap
+1 Thirst for Knowledge
+1 Turn // Burn
+
+//Enchantment Artifact (1)
+1 Bident of Thassa
+
+//Planeswalker (1)
+1 Ral Zarek
+
+//Sorcery (9)
+1 Enter the Infinite
+1 Fabricate
+1 Inner Fire
+1 Molten Psyche
+1 Ponder
+1 Preordain
+1 Rite of Replication
+1 Time Reversal
+1 Vandalblast
+
+//Tribal Artifact (1)
+1 Diviner's Wand
+
+//Land (29)
+1 Command Tower
+1 Evolving Wilds
+1 Halimar Depths
+13 Island
+1 Izzet Boilerworks
+1 Izzet Guildgate
+5 Mountain
+1 Myriad Landscape
+1 Reliquary Tower
+1 Rogue's Passage
+1 Shivan Reef
+1 Temple of the False God
+1 Terramorphic Expanse
+
+SB: 1 Æther Adept
+SB: 1 Arjun, the Shifting Flame
+SB: 1 Augur of Bolas
+SB: 1 Blasphemous Act
+SB: 1 Chromatic Lantern
+SB: 1 Darksteel Ingot
+SB: 2 Deep-Slumber Titan
+SB: 1 Enclave Cryptologist
+SB: 1 Hisoka, Minamo Sensei
+SB: 1 Jace Beleren
+SB: 1 Jace's Archivist
+SB: 1 Keranos, God of Storms
+SB: 1 Mana Geyser
+SB: 1 Mana Vault
+SB: 1 Mnemonic Wall
+SB: 1 Nykthos, Shrine to Nyx
+SB: 1 Paragon of Gathering Mists
+SB: 1 Ral Zarek
+SB: 1 Riptide Director
+SB: 1 Skullclamp
+SB: 1 Snapcaster Mage
+SB: 1 Stormchaser Chimera
+SB: 1 Thran Dynamo
+SB: 1 Vedalken Orrery
+SB: 1 Wayfarer's Bauble
+SB: 1 Words of War
+
