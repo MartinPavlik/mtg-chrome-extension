@@ -42,7 +42,7 @@ function reduceCard(card, action) {
       return Object.assign({}, card, {
           orderedCount: card.orderedCount + 1,
           mutations: card.mutations.map( adept => {
-            if(adept.id == action.mutation.id) {
+            if(adept.id == action.payload.mutation.id) {
               return reduceMutation(adept, action)
             }
             return adept;
@@ -53,7 +53,7 @@ function reduceCard(card, action) {
       return Object.assign({}, card, {
           orderedCount: card.orderedCount - 1,
           mutations: card.mutations.map( adept => {
-            if(adept.id == action.mutation.id) {
+            if(adept.id == action.payload.mutation.id) {
               return reduceMutation(adept, action)
             }
             return adept;
@@ -70,7 +70,7 @@ export default function (state = defaultState, action) {
     case LOAD_CARDS_REQUEST:
       return Object.assign({}, state, {
         loadingStatus: LOADING,
-        toBeLoaded: action.toBeLoaded,
+        toBeLoaded: action.payload.toBeLoaded,
         loaded: 0
       })
     case LOAD_CARDS_DONE:
@@ -79,7 +79,7 @@ export default function (state = defaultState, action) {
       })
     case CARD_LOADED:
       return Object.assign({}, state, {
-        items: state.items.concat([action.card]),
+        items: state.items.concat([action.payload.card]),
         loaded: state.loaded + 1
       })
     case ORDER_CARDS_REQUEST:
@@ -91,7 +91,7 @@ export default function (state = defaultState, action) {
         orderingStatus: ORDERED
       })
     case TOGGLE_EXPAND_CARD:
-      var { id } = action;
+      var { id } = action.payload;
       const nextItems = state.items.map( adept => {
         if(id == adept.id) {
           adept = Object.assign({}, adept, {
@@ -104,7 +104,7 @@ export default function (state = defaultState, action) {
         items: nextItems
       })
     case ADD_TO_CART:
-      var { card, mutation } = action;
+      var { card, mutation } = action.payload;
       return Object.assign({}, state, {
         totalPrice: state.totalPrice + mutation.price,
         items: state.items.map( adept => {
@@ -115,7 +115,7 @@ export default function (state = defaultState, action) {
         })
       })
     case REMOVE_FROM_CART:
-      var { card, mutation } = action;
+      var { card, mutation } = action.payload;
       return Object.assign({}, state, {
         totalPrice: state.totalPrice - mutation.price,
         items: state.items.map( adept => {

@@ -20,7 +20,9 @@ export function loadCardsRequest(cardListString) {
 
     dispatch({
       type: LOAD_CARDS_REQUEST,
-      toBeLoaded: queue.length
+      payload: {
+        toBeLoaded: queue.length
+      }
     })
 
     loadCards(queue, function(card){
@@ -48,7 +50,9 @@ export function loadCardsDone() {
 export function cardLoaded(card) {
   return {
     type: CARD_LOADED,
-    card
+    payload: {
+      card
+    }
   }
 }
 
@@ -130,22 +134,28 @@ export function useCheapest() {
 export function toggleCardExpand(id) {
   return {
     type: TOGGLE_EXPAND_CARD,
-    id
+    payload: {
+      id
+    }
   }
 }
 
 export function addToCart(mutation, card) {
   return {
     type: ADD_TO_CART,
-    card,
-    mutation
+    payload: {
+      card,
+      mutation
+    }
   }
 }
 
 export function removeFromCart(mutation, card) {
   return {
     type: REMOVE_FROM_CART,
-    card,
-    mutation
+    payload: {
+      card,
+      mutation
+    }
   }
 }
