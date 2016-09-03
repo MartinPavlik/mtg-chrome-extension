@@ -24,6 +24,8 @@
     "expect": "^1.20.2",
     "mocha": "^2.4.5",
     "redux-mock-store": "^1.0.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^2.3.1",
     "webpack": "^1.12.10"
   }
 }
