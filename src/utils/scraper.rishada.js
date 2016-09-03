@@ -1,5 +1,9 @@
+import $ from 'jquery'
 import BASIC_LANDS from '../constants/basicLands'
-import {getUrl, DOMAIN} from '../constants/rishada/config'
+import {
+  getUrl, 
+  DOMAIN
+} from '../constants/rishada/config'
 import CARD_TEMPLATE from '../constants/cardTemplate'
 
 /*

@@ -1,5 +1,11 @@
+import $ from 'jquery'
+
 import BASIC_LANDS from '../constants/basicLands'
-import {REQUEST_DATA_TEMPLATE, DOMAIN, LOAD_CARD_URL} from '../constants/cernyRytir/config'
+import {
+  REQUEST_DATA_TEMPLATE, 
+  DOMAIN, 
+  LOAD_CARD_URL
+} from '../constants/cernyRytir/config'
 import CARD_TEMPLATE from '../constants/cardTemplate'
 
 var createRequestData = function(cardName) {

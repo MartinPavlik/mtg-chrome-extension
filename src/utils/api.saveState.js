@@ -1,3 +1,4 @@
+import $ from 'jquery'
 
 const API_URL = 'http://localhost:8080'
 

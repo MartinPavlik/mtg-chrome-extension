@@ -1,4 +1,5 @@
-import {DOMAIN} from '../constants/rishada/config'
+import { DOMAIN } from '../constants/rishada/config'
+import $ from 'jquery'
 
 /*
    Orders cards at www.cernyrytir.cz

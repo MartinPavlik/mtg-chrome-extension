@@ -1,4 +1,5 @@
 import {DOMAIN} from '../constants/cernyRytir/config'
+import $ from 'jquery'
 
 /*
    Orders cards at www.cernyrytir.cz
