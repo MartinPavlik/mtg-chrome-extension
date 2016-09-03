@@ -1,4 +1,5 @@
 import {parseImport, loadCards} from '../utils/scraper.cernyRytir'
+import {sendOrder} from '../utils/api.cernyRytir'
 
 export const LOAD_CARDS_REQUEST = 'LOAD_CARDS_REQUEST';
 export const LOAD_CARDS_DONE = 'LOAD_CARDS_DONE';
@@ -52,7 +53,37 @@ export function cardLoaded(card) {
 }
 
 export function orderCardsRequest() {
-  // todo
+  return (dispatch, getState) => {
+    const {items} = getState()['cards']
+
+    let queue = [];
+
+    items.forEach( card => {
+      if(card.orderedCount) {
+        card.mutations.forEach( mutation => {
+          if(mutation.orderedCount) {
+            queue.push(mutation);
+          }
+        })
+      }
+    })
+
+    dispatch({
+      type: ORDER_CARDS_REQUEST
+    })
+
+    let loaded = queue.length
+    const onSuccess = (data) => {
+      console.info('success', data)
+      loaded--;
+      if(loaded == 0) {
+        dispatch({
+          type: ORDER_CARDS_DONE
+        })
+      }
+    }
+    sendOrder(queue, onSuccess);
+  }
 }
 
 export function orderCardsDone() {

@@ -1,11 +1,14 @@
 import { NOT_LOADED, LOADING, LOADED } from '../constants/LoadingStatus'
+import { NOT_ORDERED, ORDERING, ORDERED } from '../constants/OrderingStatus'
 import {
   LOAD_CARDS_REQUEST,
   LOAD_CARDS_DONE,
   CARD_LOADED,
   TOGGLE_EXPAND_CARD,
   ADD_TO_CART,
-  REMOVE_FROM_CART
+  REMOVE_FROM_CART,
+  ORDER_CARDS_REQUEST,
+  ORDER_CARDS_DONE
 } from '../actions/CardActions'
 
 const defaultState = {
@@ -14,7 +17,8 @@ const defaultState = {
   totalPrice: 0,
   toBeLoaded: 0,
   loaded: 0,
-  loadingStatus: NOT_LOADED
+  loadingStatus: NOT_LOADED,
+  orderingStatus: NOT_ORDERED
 }
 
 function reduceMutation(mutation, action) {
@@ -77,6 +81,14 @@ export default function (state = defaultState, action) {
       return Object.assign({}, state, {
         items: state.items.concat([action.card]),
         loaded: state.loaded + 1
+      })
+    case ORDER_CARDS_REQUEST:
+      return Object.assign({}, state, {
+        orderingStatus: ORDERING
+      })
+    case ORDER_CARDS_DONE:
+      return Object.assign({}, state, {
+        orderingStatus: ORDERED
       })
     case TOGGLE_EXPAND_CARD:
       var { id } = action;

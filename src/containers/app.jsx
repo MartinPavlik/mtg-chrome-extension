@@ -17,6 +17,7 @@ import CardList from '../components/cardList'
 import StateList from '../components/stateList'
 
 import * as LOADING_STATUS from '../constants/LoadingStatus'
+import * as ORDERING_STATUS from '../constants/OrderingStatus'
 
 import { LOCAL_STORAGE_KEY } from '../constants/localStorage'
 
@@ -100,28 +101,13 @@ const App = React.createClass({
     loadCards(queue, addItem);*/
     const { loadCardsRequest } = this.props
     console.info(this.props)
-    alert('load')
     loadCardsRequest(this.state.text)
   },
 
   handleOrder (e) {
     e.preventDefault();
-    var queue = [];
-    this.state.items.forEach(function(card){
-      if(card.orderedCount) {
-        card.mutations.forEach(function(mutation){
-          if(mutation.orderedCount) {
-            queue.push(mutation);
-          }
-        })
-      }
-    });
-
-    var onSuccess = function onSuccess(data) {
-
-    };
-    var sendOrder = this.state.server == 'cerny-rytir' ? sendOrderCR : sendOrderRishada;
-    sendOrder(queue, onSuccess);
+    const { orderCardsRequest } = this.props
+    orderCardsRequest()
   },
 
   handleExpandCard (item) {
@@ -159,7 +145,7 @@ const App = React.createClass({
   },
 
   render () {
-    const { items, loadingStatus, loaded, toBeLoaded, totalPrice} = this.props
+    const { items, loadingStatus, orderingStatus, loaded, toBeLoaded, totalPrice} = this.props
     return (
       <div>
         <div className="row">
@@ -174,7 +160,7 @@ const App = React.createClass({
               stripped={true} 
               bsStyle="success"
               label={ loaded + ' / ' + toBeLoaded }
-              now={ loaded / toBeLoaded }
+              now={ (loaded / toBeLoaded) * 100 }
             />
           </div>
         }
@@ -199,11 +185,25 @@ const App = React.createClass({
             </Button>
           </form>
         }
-        {loadingStatus == LOADING_STATUS.LOADED &&
+        {loadingStatus == LOADING_STATUS.LOADED && orderingStatus == ORDERING_STATUS.NOT_ORDERED &&
           <div>
             <Button bsStyle="primary" bsSize="lg" onClick={this.handleOrder}>
               {'Confirm & order these cards, total: ' + totalPrice + ',-'}
             </Button>
+          </div>
+        }
+        {orderingStatus == ORDERING_STATUS.ORDERING &&
+          <div className='alert alert-info'>
+            <p>
+              Ordering
+            </p>
+          </div>
+        }
+        {orderingStatus == ORDERING_STATUS.ORDERED && 
+          <div className="alert alert-success">
+            <p>
+              Your order has been completed, <a href='http://www.cernyrytir.cz/index.php3?akce=0&kosicek=1' target='_blank'>continue to eshop</a>.
+            </p>
           </div>
         }
       </div>

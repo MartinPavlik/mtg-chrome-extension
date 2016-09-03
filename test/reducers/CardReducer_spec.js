@@ -1,9 +1,36 @@
 import expect from 'expect'
 import reducer from '../../src/reducers/CardReducer'
 import { NOT_LOADED, LOADING, LOADED } from '../../src/constants/LoadingStatus'
+import { NOT_ORDERED, ORDERING, ORDERED } from '../../src/constants/OrderingStatus'
 import * as types from '../../src/actions/CardActions'
 
 describe('card reducer', () => {
+  it('should handle ORDER_CARDS_REQUEST', () => {
+    expect(
+      reducer({
+        orderingStatus: NOT_ORDERED
+      }, {
+        type: types.ORDER_CARDS_REQUEST,
+      })
+    ).toEqual(
+      {
+        orderingStatus: ORDERING
+      }
+    )
+  })
+  it('should handle ORDER_CARDS_DONE', () => {
+    expect(
+      reducer({
+        orderingStatus: ORDERING
+      }, {
+        type: types.ORDER_CARDS_DONE,
+      })
+    ).toEqual(
+      {
+        orderingStatus: ORDERED
+      }
+    )
+  })
   it('should handle LOAD_CARDS_REQUEST', () => {
     expect(
       reducer({}, {
