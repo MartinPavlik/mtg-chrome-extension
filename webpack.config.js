@@ -15,7 +15,7 @@ module.exports = {
       },
       {
         test: /\.styl$/,
-        loader: 'css-loader!stylus-loader?paths=node_modules/bootstrap-stylus/stylus/'
+        loader: 'css-loader!stylus-loader'
       }
     ]
   },
