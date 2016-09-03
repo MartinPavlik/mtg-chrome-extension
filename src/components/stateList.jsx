@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import {Button, ProgressBar} from 'react-bootstrap'
+import { Button, ProgressBar } from 'react-bootstrap'
 
 const LOCAL_STORAGE_KEY = 'magic-states';
 
@@ -21,10 +21,12 @@ export default React.createClass({
       }, state.id);
     };
     return (
-      React.createElement('div', {className: 'state-list'}, 
-        this.props.states.map(createState),
-        React.createElement(Button, {bsStyle: 'success', onClick: this.props.handleSaveState}, 'Save work')
-      )
+      <div className='state-list'>
+        { this.props.states.map(createState) }
+        <Button bsStyle='success' onClick={ this.props.handleSaveState }>
+          {'Save work'}
+        </Button>
+      </div>
     )
   }
 

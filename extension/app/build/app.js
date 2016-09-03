@@ -40117,7 +40117,9 @@
 
 	    dispatch({
 	      type: LOAD_CARDS_REQUEST,
-	      toBeLoaded: queue.length
+	      payload: {
+	        toBeLoaded: queue.length
+	      }
 	    });
 
 	    (0, _scraper.loadCards)(queue, function (card) {
@@ -40148,7 +40150,9 @@
 	function cardLoaded(card) {
 	  return {
 	    type: CARD_LOADED,
-	    card: card
+	    payload: {
+	      card: card
+	    }
 	  };
 	}
 
@@ -40227,23 +40231,29 @@
 	function toggleCardExpand(id) {
 	  return {
 	    type: TOGGLE_EXPAND_CARD,
-	    id: id
+	    payload: {
+	      id: id
+	    }
 	  };
 	}
 
 	function addToCart(mutation, card) {
 	  return {
 	    type: ADD_TO_CART,
-	    card: card,
-	    mutation: mutation
+	    payload: {
+	      card: card,
+	      mutation: mutation
+	    }
 	  };
 	}
 
 	function removeFromCart(mutation, card) {
 	  return {
 	    type: REMOVE_FROM_CART,
-	    card: card,
-	    mutation: mutation
+	    payload: {
+	      card: card,
+	      mutation: mutation
+	    }
 	  };
 	}
 
@@ -40257,9 +40267,15 @@
 	  value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
 	var _mutationList = __webpack_require__(447);
 
@@ -40267,36 +40283,89 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _react2.default.createClass({
-	  displayName: 'CardList',
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	  handleToggleExpand: function handleToggleExpand(e, item) {
-	    e.preventDefault();
-	    console.info("expand: ", e, item, this.props);
-	    this.props.handleExpandCard(item);
-	  },
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	  render: function render() {
-	    var that = this;
-	    var createCard = function createCard(item) {
-	      return _react2.default.createElement('div', {
-	        key: item.id,
-	        className: 'card'
-	      }, _react2.default.createElement('div', {
-	        className: item.orderedCount >= item.count ? 'card-head finished' : 'card-head',
-	        onClick: function onClick(e) {
-	          that.handleToggleExpand(e, item);
-	        }
-	      }, item.name, _react2.default.createElement('span', { className: 'pull-right' }, item.orderedCount + ' / ' + item.count)), _react2.default.createElement('div', { className: 'card-mutations' }, item.expanded && _react2.default.createElement(_mutationList2.default, {
-	        items: item.mutations,
-	        handleAddToCart: that.props.handleAddToCart,
-	        handleRemoveFromCart: that.props.handleRemoveFromCart,
-	        card: item
-	      })));
-	    };
-	    return _react2.default.createElement('div', { className: 'card-list' }, this.props.items.map(createCard));
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardList = function (_Component) {
+	  _inherits(CardList, _Component);
+
+	  function CardList(props) {
+	    _classCallCheck(this, CardList);
+
+	    var _this = _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
+
+	    _this.renderCard = _this.renderCard.bind(_this);
+	    _this.handleToggleExpand = _this.handleToggleExpand.bind(_this);
+	    return _this;
 	  }
-	});
+
+	  _createClass(CardList, [{
+	    key: 'handleToggleExpand',
+	    value: function handleToggleExpand(e, item) {
+	      var handleExpandCard = this.props.handleExpandCard;
+
+	      handleExpandCard(item);
+	    }
+	  }, {
+	    key: 'renderCard',
+	    value: function renderCard(item) {
+	      var that = this;
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'card', key: item.id },
+	        _react2.default.createElement(
+	          'div',
+	          {
+	            className: item.orderedCount >= item.count ? 'card-head finished' : 'card-head',
+	            onClick: function onClick(e) {
+	              return that.handleToggleExpand(e, item);
+	            }
+	          },
+	          item.name,
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'pull-right' },
+	            item.orderedCount + ' / ' + item.count
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'card-mutations' },
+	          item.expanded == true && _react2.default.createElement(_mutationList2.default, {
+	            items: item.mutations,
+	            handleAddToCart: that.props.handleAddToCart,
+	            handleRemoveFromCart: that.props.handleRemoveFromCart,
+	            card: item
+	          })
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'card-list' },
+	        this.props.items.map(this.renderCard)
+	      );
+	    }
+	  }]);
+
+	  return CardList;
+	}(_react.Component);
+
+	exports.default = CardList;
+
+
+	CardList.propTypes = {
+	  items: _react.PropTypes.array.isRequired,
+	  handleExpandCard: _react.PropTypes.func.isRequired,
+	  handleAddToCart: _react.PropTypes.func.isRequired,
+	  handleRemoveFromCart: _react.PropTypes.func.isRequired
+	};
 
 /***/ },
 /* 447 */
@@ -40308,51 +40377,164 @@
 	  value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
 	var _reactBootstrap = __webpack_require__(183);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _react2.default.createClass({
-	  displayName: 'MutationList',
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	  getBsStyle: function getBsStyle(name) {
-	    if (name.indexOf('foil') != -1) return 'success';
-	    if (name.indexOf('lightly played') != -1 || name.indexOf('moderately played') != -1) return 'warning';
-	    if (name.indexOf('heavily played') != -1) return 'danger';
-	    return 'default;';
-	  },
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	  render: function render() {
-	    var that = this;
-	    var createMutation = function createMutation(item) {
-	      return _react2.default.createElement('tr', { className: 'mutation', key: item.id }, _react2.default.createElement('td', null, _react2.default.createElement(_reactBootstrap.OverlayTrigger, {
-	        trigger: 'hover',
-	        placement: 'right',
-	        container: this,
-	        overlay: _react2.default.createElement(_reactBootstrap.Popover, null, _react2.default.createElement('img', { src: item.imgUrl, width: 300 }), item.orderedCount >= item.count && _react2.default.createElement('p', { className: 'alert alert-danger' }, 'No more cards available'))
-	      }, _react2.default.createElement(_reactBootstrap.Button, {
-	        bsStyle: that.getBsStyle(item.name),
-	        onClick: function onClick(e) {
-	          e.preventDefault();
-	          console.info(item, that.props.card);
-	          that.props.handleAddToCart(item, that.props.card);
-	        }
-	      }, item.name)), item.orderedCount >= item.count && _react2.default.createElement('span', { className: 'alert alert-danger' }, 'No more cards available')), _react2.default.createElement('td', null, item.orderedCount != 0 && _react2.default.createElement('span', null, _react2.default.createElement('span', { className: 'alert alert-warning' }, item.orderedCount + ' x  ' + item.price + '=' + item.orderedCount * item.price + ',-'), _react2.default.createElement(_reactBootstrap.Button, {
-	        bsStyle: 'danger',
-	        bsSize: 'sm',
-	        onClick: function onClick(e) {
-	          e.preventDefault();
-	          that.props.handleRemoveFromCart(item, that.props.card);
-	        }
-	      }, '-1'))), _react2.default.createElement('td', null, item.edition), _react2.default.createElement('td', null, item.rarity), _react2.default.createElement('td', null, item.count + 'x'), _react2.default.createElement('td', null, item.price + ',-'));
-	    };
-	    return _react2.default.createElement('table', { className: 'mutations' }, _react2.default.createElement('tbody', null, this.props.items.map(createMutation)));
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var MutationList = function (_Component) {
+	  _inherits(MutationList, _Component);
+
+	  function MutationList(props) {
+	    _classCallCheck(this, MutationList);
+
+	    var _this = _possibleConstructorReturn(this, (MutationList.__proto__ || Object.getPrototypeOf(MutationList)).call(this, props));
+
+	    _this.renderMutation = _this.renderMutation.bind(_this);
+	    return _this;
 	  }
-	});
+
+	  _createClass(MutationList, [{
+	    key: 'getBsStyle',
+	    value: function getBsStyle(name) {
+	      if (name.indexOf('foil') != -1) return 'success';
+	      if (name.indexOf('lightly played') != -1 || name.indexOf('moderately played') != -1) return 'warning';
+	      if (name.indexOf('heavily played') != -1) return 'danger';
+	      return 'default;';
+	    }
+	  }, {
+	    key: 'renderMutation',
+	    value: function renderMutation(item) {
+	      var _this2 = this;
+
+	      return _react2.default.createElement(
+	        'tr',
+	        { className: 'mutation', key: item.id },
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          _react2.default.createElement(
+	            _reactBootstrap.OverlayTrigger,
+	            {
+	              placement: 'right',
+	              overlay: _react2.default.createElement(
+	                _reactBootstrap.Popover,
+	                null,
+	                _react2.default.createElement('img', {
+	                  src: item.imgUrl,
+	                  width: 300
+	                })
+	              )
+	            },
+	            _react2.default.createElement(
+	              _reactBootstrap.Button,
+	              {
+	                bsStyle: this.getBsStyle(item.name),
+	                onClick: function onClick(e) {
+	                  // todo
+	                  e.preventDefault();
+	                  _this2.props.handleAddToCart(item, _this2.props.card);
+	                }
+	              },
+	              item.name
+	            )
+	          ),
+	          item.orderedCount >= item.count && _react2.default.createElement(
+	            'span',
+	            { className: 'alert alert-danger', style: { marginLeft: '10px' } },
+	            'No more cards available'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          item.orderedCount != 0 && _react2.default.createElement(
+	            'span',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'alert alert-warning' },
+	              ' ' + item.orderedCount + ' x  ' + item.price + ' = ' + item.orderedCount * item.price + ' ,-'
+	            ),
+	            _react2.default.createElement(
+	              _reactBootstrap.Button,
+	              { bsStyle: 'danger', bsSize: 'sm', onClick: function onClick(e) {
+	                  // todo
+	                  e.preventDefault();
+	                  _this2.props.handleRemoveFromCart(item, _this2.props.card);
+	                } },
+	              '-1'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          item.edition
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          item.rarity
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          item.count,
+	          ' x'
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          item.price,
+	          ' ,-'
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var items = this.props.items;
+
+	      return _react2.default.createElement(
+	        'table',
+	        { className: 'mutations' },
+	        _react2.default.createElement(
+	          'tbody',
+	          null,
+	          items.map(this.renderMutation)
+	        )
+	      );
+	    }
+	  }]);
+
+	  return MutationList;
+	}(_react.Component);
+
+	exports.default = MutationList;
+
+
+	MutationList.propTypes = {
+	  card: _react.PropTypes.object.isRequired,
+	  handleAddToCart: _react.PropTypes.func.isRequired,
+	  handleRemoveFromCart: _react.PropTypes.func.isRequired,
+	  items: _react.PropTypes.array.isRequired
+	};
 
 /***/ },
 /* 448 */
@@ -40391,7 +40573,16 @@
 	        }
 	      }, state.id);
 	    };
-	    return _react2.default.createElement('div', { className: 'state-list' }, this.props.states.map(createState), _react2.default.createElement(_reactBootstrap.Button, { bsStyle: 'success', onClick: this.props.handleSaveState }, 'Save work'));
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'state-list' },
+	      this.props.states.map(createState),
+	      _react2.default.createElement(
+	        _reactBootstrap.Button,
+	        { bsStyle: 'success', onClick: this.props.handleSaveState },
+	        'Save work'
+	      )
+	    );
 	  }
 
 	});
@@ -40540,7 +40731,7 @@
 	    case _CardActions.LOAD_CARDS_REQUEST:
 	      return Object.assign({}, state, {
 	        loadingStatus: _LoadingStatus.LOADING,
-	        toBeLoaded: action.toBeLoaded,
+	        toBeLoaded: action.payload.toBeLoaded,
 	        loaded: 0
 	      });
 	    case _CardActions.LOAD_CARDS_DONE:
@@ -40549,7 +40740,7 @@
 	      });
 	    case _CardActions.CARD_LOADED:
 	      return Object.assign({}, state, {
-	        items: state.items.concat([action.card]),
+	        items: state.items.concat([action.payload.card]),
 	        loaded: state.loaded + 1
 	      });
 	    case _CardActions.ORDER_CARDS_REQUEST:
@@ -40561,7 +40752,7 @@
 	        orderingStatus: _OrderingStatus.ORDERED
 	      });
 	    case _CardActions.TOGGLE_EXPAND_CARD:
-	      var id = action.id;
+	      var id = action.payload.id;
 
 	      var nextItems = state.items.map(function (adept) {
 	        if (id == adept.id) {
@@ -40575,8 +40766,9 @@
 	        items: nextItems
 	      });
 	    case _CardActions.ADD_TO_CART:
-	      var card = action.card;
-	      var mutation = action.mutation;
+	      var _action$payload = action.payload;
+	      var card = _action$payload.card;
+	      var mutation = _action$payload.mutation;
 
 	      return Object.assign({}, state, {
 	        totalPrice: state.totalPrice + mutation.price,
@@ -40588,8 +40780,9 @@
 	        })
 	      });
 	    case _CardActions.REMOVE_FROM_CART:
-	      var card = action.card;
-	      var mutation = action.mutation;
+	      var _action$payload2 = action.payload;
+	      var card = _action$payload2.card;
+	      var mutation = _action$payload2.mutation;
 
 	      return Object.assign({}, state, {
 	        totalPrice: state.totalPrice - mutation.price,
@@ -40642,7 +40835,7 @@
 	      return Object.assign({}, card, {
 	        orderedCount: card.orderedCount + 1,
 	        mutations: card.mutations.map(function (adept) {
-	          if (adept.id == action.mutation.id) {
+	          if (adept.id == action.payload.mutation.id) {
 	            return reduceMutation(adept, action);
 	          }
 	          return adept;
@@ -40652,7 +40845,7 @@
 	      return Object.assign({}, card, {
 	        orderedCount: card.orderedCount - 1,
 	        mutations: card.mutations.map(function (adept) {
-	          if (adept.id == action.mutation.id) {
+	          if (adept.id == action.payload.mutation.id) {
 	            return reduceMutation(adept, action);
 	          }
 	          return adept;

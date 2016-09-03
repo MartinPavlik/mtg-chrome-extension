@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import { Button, Popover, OverlayTrigger } from 'react-bootstrap'
 
-import {Button, Popover, OverlayTrigger} from 'react-bootstrap'
+export default class MutationList extends Component {
+  constructor(props) {
+    super(props)
+    this.renderMutation = this.renderMutation.bind(this)
+  }
 
-export default React.createClass({
-  displayName: 'MutationList',
-
-  getBsStyle: function getBsStyle(name) {
+  getBsStyle(name) {
     if(name.indexOf('foil') != -1)
       return 'success';
     if(name.indexOf('lightly played') != -1 || name.indexOf('moderately played') != -1)
@@ -13,89 +16,87 @@ export default React.createClass({
     if(name.indexOf('heavily played') != -1)
       return 'danger'; 
     return 'default;'
-  },
+  }
 
-  render: function render() {
-    var that = this;
-    var createMutation = function createMutation(item) {
-      return React.createElement(
-        'tr',
-        { className: 'mutation', key: item.id },
-        React.createElement(
-          'td',
-          null,
-          React.createElement(
-            OverlayTrigger, 
-            {
-              trigger: 'hover', 
-              placement: 'right',
-              container: this,
-              overlay: React.createElement(Popover, null,
-                React.createElement('img', {src: item.imgUrl, width: 300}),
-                (item.orderedCount >= item.count && React.createElement('p', {className: 'alert alert-danger'}, 
-                  'No more cards available')
-                )
-              )
-            },
-            React.createElement(
-              Button,
-              {
-                bsStyle: that.getBsStyle(item.name),
-                onClick: function(e) {
-                  e.preventDefault();
-                  console.info(item, that.props.card)
-                  that.props.handleAddToCart(item, that.props.card);
-                }
-              },
-              item.name
-            )
-          ),
-          (item.orderedCount >= item.count && React.createElement('span', {className: 'alert alert-danger'}, 'No more cards available'))
-        ),
-        React.createElement('td', null,
-          (item.orderedCount != 0 &&
-            React.createElement(
-              'span', null,
-              React.createElement('span',
-                {className: 'alert alert-warning'},
-                item.orderedCount + ' x  ' + item.price + '=' + (item.orderedCount*item.price) + ',-'
-              ),
-              React.createElement(Button,
-                {
-                  bsStyle: 'danger',
-                  bsSize: 'sm',
-                  onClick: function(e) {
-                    e.preventDefault()
-                    that.props.handleRemoveFromCart(item, that.props.card);
-                  }
-                },
-                '-1'
-              )
-            )
-          )
-        ),
-        React.createElement('td',null,
-          item.edition
-        ),
-        React.createElement('td', null,
-          item.rarity
-        ),
-        React.createElement('td', null,
-          item.count  + 'x'
-        ),
-        React.createElement('td', null,
-          item.price  + ',-'
-        )
-      );
-    };
-    return React.createElement(
-      'table',
-      { className: 'mutations' },
-      React.createElement(
-        'tbody',
-        null,
-        this.props.items.map(createMutation)
-      )
-    );
-   }
-});
+  renderMutation(item) {
+    return (
+      <tr className='mutation' key={item.id}>
+        <td>
+          <OverlayTrigger
+            placement='right'
+            overlay={
+              <Popover>
+                <img
+                  src={ item.imgUrl }
+                  width= { 300 }
+                />
+              </Popover>
+            } 
+          >
+            <Button
+              bsStyle={ this.getBsStyle(item.name) }
+              onClick={ (e) => {
+                // todo
+                e.preventDefault()
+                this.props.handleAddToCart(item, this.props.card)
+              }}
+            >
+              { item.name }
+            </Button>
+          </OverlayTrigger>
+          {item.orderedCount >= item.count && 
+            <span className='alert alert-danger' style={ {marginLeft: '10px'} }>
+              {'No more cards available'}
+            </span>
+          }
+        </td>
+        <td>
+          { item.orderedCount != 0 && 
+            <span>
+              <span className='alert alert-warning'>
+                { ` ${item.orderedCount} x  ${item.price} = ${item.orderedCount*item.price} ,-` }
+              </span>
+              <Button bsStyle='danger' bsSize='sm' onClick={ (e) => {
+                // todo
+                e.preventDefault()
+                this.props.handleRemoveFromCart(item, this.props.card)
+              }}>
+                {'-1'}
+              </Button>
+            </span>
+          }
+        </td>
+        <td>
+          {item.edition}
+        </td>
+        <td>
+          {item.rarity}
+        </td>
+        <td>
+          {item.count} x
+        </td>
+        <td>
+          {item.price} ,-
+        </td>
+      </tr>
+    )
+  }
+
+  render() {
+    const { items } = this.props;
+    return (
+      <table className='mutations'>
+        <tbody>
+          { items.map(this.renderMutation) }
+        </tbody>
+      </table>
+    )
+  }
+}
+
+MutationList.propTypes = {
+  card: PropTypes.object.isRequired,
+  handleAddToCart: PropTypes.func.isRequired,
+  handleRemoveFromCart: PropTypes.func.isRequired,
+  items: PropTypes.array.isRequired
+}
