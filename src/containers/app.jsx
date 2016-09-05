@@ -14,6 +14,8 @@ import * as CardActions from '../actions/CardActions'
 
 import CardList from '../components/cardList'
 
+import ImportForm from '../components/importForm'
+
 import StateList from '../components/stateList'
 
 import * as LOADING_STATUS from '../constants/LoadingStatus'
@@ -81,27 +83,9 @@ const App = React.createClass({
 
   handleSubmit (e) {
     e.preventDefault();
-    /*
-    var that = this;
-    var queue = this.state.server == 'cerny-rytir' ? parseImportCR(this.state.text) : parseImportRishada(this.state.text);
-    var addItem = function addItem(card) {
-      console.info(card);
-      var newItem = Object.assign({}, card, { id: Date.now() });
-      var nextItems = that.state.items.concat([newItem]);
-
-      that.setState( Object.assign({}, that.state, { items: nextItems, loaded: that.state.loaded+1 }));
-
-      if(that.state.loaded == that.state.toBeLoaded) {
-        that.setState( Object.assign({}, that.state, {loadingStatus: LOADING_STATUS.LOADED}))
-      }
-    };
-
-    this.setState(Object.assign({}, this.state, { text: '', loadingStatus: LOADING_STATUS.LOADING, toBeLoaded: queue.length, loaded: 0}));
-    var loadCards =  this.state.server == 'cerny-rytir' ? loadCardsCR : loadCardsRishada;
-    loadCards(queue, addItem);*/
     const { loadCardsRequest } = this.props
-    console.info(this.props)
-    loadCardsRequest(this.state.text)
+    const { text } = this.props.form.import.values
+    loadCardsRequest(text)
   },
 
   handleOrder (e) {
@@ -145,7 +129,7 @@ const App = React.createClass({
   },
 
   render () {
-    const { items, loadingStatus, orderingStatus, loaded, toBeLoaded, totalPrice} = this.props
+    const { items, loadingStatus, orderingStatus, loaded, toBeLoaded, totalPrice} = this.props.cards
     return (
       <div>
         <div className="row">
@@ -178,12 +162,7 @@ const App = React.createClass({
           handleRemoveFromCart={this.handleRemoveFromCart} 
           />
         {loadingStatus == LOADING_STATUS.NOT_LOADED && 
-          <form onSubmit={this.handleSubmit}>
-            <textarea onChange={this.onChange} value={this.state.text} />
-            <Button bsStyle="primary" bsSize="lg" type="submit">
-              Do the magic
-            </Button>
-          </form>
+          <ImportForm handleSubmit={this.handleSubmit} />
         }
         {loadingStatus == LOADING_STATUS.LOADED && orderingStatus == ORDERING_STATUS.NOT_ORDERED &&
           <div>
@@ -282,7 +261,7 @@ const App = React.createClass({
 });
 
 function mapStateToProps(state, ownProps) {
-  return state.cards
+  return state;
 }
 
 export default connect(mapStateToProps, CardActions)(App)
