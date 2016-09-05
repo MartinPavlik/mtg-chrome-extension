@@ -21361,8 +21361,6 @@
 
 	var _api2 = __webpack_require__(444);
 
-	var _api3 = __webpack_require__(445);
-
 	var _CardActions = __webpack_require__(446);
 
 	var CardActions = _interopRequireWildcard(_CardActions);
@@ -21375,10 +21373,6 @@
 
 	var _importForm2 = _interopRequireDefault(_importForm);
 
-	var _stateList = __webpack_require__(449);
-
-	var _stateList2 = _interopRequireDefault(_stateList);
-
 	var _LoadingStatus = __webpack_require__(450);
 
 	var LOADING_STATUS = _interopRequireWildcard(_LoadingStatus);
@@ -21387,55 +21381,12 @@
 
 	var ORDERING_STATUS = _interopRequireWildcard(_OrderingStatus);
 
-	var _localStorage = __webpack_require__(452);
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var INIT_STATE = {
-	  items: [],
-	  text: '',
-	  totalPrice: 0,
-	  toBeLoaded: 0,
-	  loaded: 0,
-	  loadingStatus: LOADING_STATUS.NOT_LOADED,
-	  states: [],
-	  server: 'cerny-rytir'
-	};
-
 	var App = _react2.default.createClass({
 	  displayName: 'App',
-	  getInitialState: function getInitialState() {
-	    return INIT_STATE;
-	  },
-	  onChange: function onChange(e) {
-	    this.setState(Object.assign({}, this.state, { text: e.target.value }));
-	  },
-	  onChangeRadio: function onChangeRadio(e) {
-	    this.setState(Object.assign({}, this.state, { server: e.target.value }));
-	    console.info(this.state, e.target.value);
-	  },
-	  handleStatesResponse: function handleStatesResponse(states) {
-	    this.setState(Object.assign({}, this.state, { states: states }));
-
-	    console.info("state: ", this.state.states);
-	  },
-	  componentDidMount: function componentDidMount() {
-	    var that = this;
-	    (0, _api3.loadStates)(that.handleStatesResponse);
-	  },
-	  handleSaveState: function handleSaveState(e) {
-	    console.log("Saving state");
-	    e.preventDefault();
-	    var that = this;
-	    (0, _api3.saveState)(this.state, that.handleStatesResponse);
-	    //this.setState(Object.assign({}, this.state));
-	  },
-	  handleLoadState: function handleLoadState(state) {
-	    console.info("loading state...", state.state, JSON.parse(state.state));
-	    this.setState(Object.assign({}, JSON.parse(state.state)));
-	  },
 	  handleSubmit: function handleSubmit(e) {
 	    e.preventDefault();
 	    var loadCardsRequest = this.props.loadCardsRequest;
@@ -21473,8 +21424,10 @@
 	    removeFromCart(mutation, card);
 	  },
 	  getHeaderText: function getHeaderText() {
-	    if (this.state.loadingStatus == LOADING_STATUS.NOT_LOADED) return 'Import cards';
-	    if (this.state.loadingStatus == LOADING_STATUS.LOADING) return 'Loading cards, please wait...';
+	    var loadingStatus = this.props.cards.loadingStatus;
+
+	    if (loadingStatus == LOADING_STATUS.NOT_LOADED) return 'Import cards';
+	    if (loadingStatus == LOADING_STATUS.LOADING) return 'Loading cards, please wait...';
 	    return 'Cards overview';
 	  },
 	  render: function render() {
@@ -21489,15 +21442,6 @@
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'row' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'col-lg-12' },
-	          _react2.default.createElement(_stateList2.default, { states: this.state.states, handleSaveState: this.handleSaveState, handleLoadState: this.handleLoadState })
-	        )
-	      ),
 	      _react2.default.createElement(
 	        'h1',
 	        { className: 'page-header' },
@@ -21568,77 +21512,6 @@
 	      )
 	    );
 	  }
-
-	  /*
-	    render: function render() {
-	      var that = this;
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement('div', {className: 'row'},
-	          React.createElement('div', {className: 'col-lg-12'}, 
-	            React.createElement(StateList, {states: this.state.states, handleSaveState: this.handleSaveState, handleLoadState: this.handleLoadState}, null)
-	          )
-	        ),
-	        React.createElement(
-	          'h1',
-	          {className: 'page-header'},
-	          this.getHeaderText()
-	        ),
-	        (this.state.loadingStatus == LOADING_STATUS.LOADING && React.createElement('div', null,
-	            React.createElement(ProgressBar, 
-	              {
-	                stripped: true, 
-	                bsStyle: 'success',
-	                label: this.state.loaded + ' / ' + this.state.toBeLoaded,
-	                now: (this.state.loaded/this.state.toBeLoaded)*100
-	              }
-	            )
-	          )
-	        ),
-	        (this.state.loadingStatus == LOADING_STATUS.LOADED && 
-	          React.createElement('div', {className: 'row'},
-	            React.createElement('div', {className: 'col-lg-12 extra-margin'},  
-	              React.createElement(Button, {bsStyle: 'default', onClick: this.handleUseCheapest},
-	                'Use the cheapest set of cards'
-	              )
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          CardList, 
-	          { 
-	            items: this.state.items, 
-	            handleExpandCard: that.handleExpandCard, 
-	            handleAddToCart: that.handleAddToCart,
-	            handleRemoveFromCart: that.handleRemoveFromCart
-	          }
-	        ),
-	        (this.state.loadingStatus == LOADING_STATUS.NOT_LOADED && React.createElement(
-	            'form',
-	            { onSubmit: this.handleSubmit },
-	            React.createElement('textarea', { onChange: this.onChange, value: this.state.text }),
-	            React.createElement(
-	              'div', null,
-	              React.createElement('input', { type: "radio", name: "server", onChange: this.onChangeRadio, value: "cerny-rytir" }), " Cerny rytir"
-	            ),
-	            React.createElement(
-	              'div', null,
-	              React.createElement('input', { type: "radio", name: "server", onChange: this.onChangeRadio, value: "rishada" }), " Rishada"
-	            ),
-	            React.createElement(Button, {bsStyle: 'primary', bsSize: 'lg', type: 'submit'}, 'Do the magic!')
-	          )
-	        ),
-	        (this.state.loadingStatus == LOADING_STATUS.LOADED && React.createElement('div', null,
-	            React.createElement(Button, {bsStyle: 'primary', bsSize: 'lg', onClick: this.handleOrder}, 
-	              'Confirm & order these cards, total: ' + this.state.totalPrice + ',-'
-	            )
-	          )
-	        )
-	      );
-	    }
-	  */
-
 	});
 
 	function mapStateToProps(state, ownProps) {
@@ -50111,56 +49984,7 @@
 	};
 
 /***/ },
-/* 445 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.loadStates = loadStates;
-	exports.saveState = saveState;
-
-	var _jquery = __webpack_require__(437);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var API_URL = 'http://localhost:8080';
-
-	var LOAD_URL = API_URL + '/load';
-
-	var SAVE_URL = API_URL + '/saveState';
-
-	function loadStates(onSuccess) {
-	  _jquery2.default.ajax({
-	    type: "GET",
-	    url: LOAD_URL,
-	    success: function success(data) {
-	      console.info("response: ", data);
-	      onSuccess(data.states);
-	    }
-	  });
-	};
-
-	function saveState(state, onSuccess) {
-	  var state = JSON.stringify(state);
-	  _jquery2.default.ajax({
-	    type: "POST",
-	    url: SAVE_URL,
-	    data: state,
-	    contentType: "application/json",
-	    success: function success(data) {
-	      console.info("response: ", data);
-	      onSuccess(data.states);
-	    }
-	  });
-	  return;
-	}
-
-/***/ },
+/* 445 */,
 /* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -50623,57 +50447,7 @@
 	};
 
 /***/ },
-/* 449 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(183);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var LOCAL_STORAGE_KEY = 'magic-states';
-
-	exports.default = _react2.default.createClass({
-	  displayName: 'StateList',
-
-	  render: function render() {
-	    var that = this;
-
-	    var createState = function createState(state) {
-	      return _react2.default.createElement(_reactBootstrap.Button, {
-	        key: state.id,
-	        bsStyle: 'warning',
-	        bsSize: 'sm',
-	        onClick: function onClick(e) {
-	          e.preventDefault();
-	          that.props.handleLoadState(state);
-	        }
-	      }, state.id);
-	    };
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'state-list' },
-	      this.props.states.map(createState),
-	      _react2.default.createElement(
-	        _reactBootstrap.Button,
-	        { bsStyle: 'success', onClick: this.props.handleSaveState },
-	        'Save work'
-	      )
-	    );
-	  }
-
-	});
-
-/***/ },
+/* 449 */,
 /* 450 */
 /***/ function(module, exports) {
 
@@ -50700,17 +50474,7 @@
 	var ORDERED = exports.ORDERED = 2;
 
 /***/ },
-/* 452 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var LOCAL_STORAGE_KEY = exports.LOCAL_STORAGE_KEY = 'magic-extension';
-
-/***/ },
+/* 452 */,
 /* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -50778,10 +50542,6 @@
 
 	var _redux = __webpack_require__(166);
 
-	var _StateReducer = __webpack_require__(456);
-
-	var _StateReducer2 = _interopRequireDefault(_StateReducer);
-
 	var _CardReducer = __webpack_require__(457);
 
 	var _CardReducer2 = _interopRequireDefault(_CardReducer);
@@ -50791,18 +50551,12 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = (0, _redux.combineReducers)({
-	   state: _StateReducer2.default,
 	   cards: _CardReducer2.default,
 	   form: _reduxForm.reducer
 	});
 
 /***/ },
-/* 456 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-/***/ },
+/* 456 */,
 /* 457 */
 /***/ function(module, exports, __webpack_require__) {
 

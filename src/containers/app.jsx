@@ -8,78 +8,16 @@ import {sendOrder as sendOrderRishada} from '../utils/api.rishada'
 import {loadCards as loadCardsCR, parseImport as parseImportCR} from '../utils/scraper.cernyRytir'
 import {sendOrder as sendOrderCR} from '../utils/api.cernyRytir'
 
-import {loadStates, saveState} from '../utils/api.saveState'
-
 import * as CardActions from '../actions/CardActions'
 
 import CardList from '../components/cardList'
 
 import ImportForm from '../components/importForm'
 
-import StateList from '../components/stateList'
-
 import * as LOADING_STATUS from '../constants/LoadingStatus'
 import * as ORDERING_STATUS from '../constants/OrderingStatus'
 
-import { LOCAL_STORAGE_KEY } from '../constants/localStorage'
-
-const INIT_STATE = {
-   items: [],
-   text: '',
-   totalPrice: 0,
-   toBeLoaded: 0,
-   loaded: 0,
-   loadingStatus: LOADING_STATUS.NOT_LOADED,
-   states: [],
-   server: 'cerny-rytir'
-};
-
-
-
 const App = React.createClass({
-
-  getInitialState () {
-    return INIT_STATE;
-  },
-
-  onChange (e) {
-    this.setState(Object.assign({}, this.state, { text: e.target.value }));
-  },
-
-  onChangeRadio (e) {
-    this.setState(Object.assign({}, this.state, { server: e.target.value }));
-    console.info(this.state, e.target.value)
-  },
-
-  handleStatesResponse(states) {
-    this.setState(
-      Object.assign(
-        {},
-        this.state, 
-        {states: states}
-      )
-    );
-
-    console.info("state: ", this.state.states);
-  },
-
-  componentDidMount() {
-    var that = this;
-    loadStates(that.handleStatesResponse);
-  },
-
-  handleSaveState (e) {
-    console.log("Saving state");
-    e.preventDefault();
-    var that = this;
-    saveState(this.state, that.handleStatesResponse);
-    //this.setState(Object.assign({}, this.state));
-  },
-
-  handleLoadState (state) {
-    console.info("loading state...", state.state, JSON.parse(state.state));
-    this.setState(Object.assign({}, JSON.parse(state.state)));
-  },
 
   handleSubmit (e) {
     e.preventDefault();
@@ -121,9 +59,10 @@ const App = React.createClass({
   },
 
   getHeaderText () {
-    if(this.state.loadingStatus == LOADING_STATUS.NOT_LOADED)
+    const { loadingStatus } = this.props.cards
+    if(loadingStatus == LOADING_STATUS.NOT_LOADED)
       return 'Import cards';
-    if(this.state.loadingStatus == LOADING_STATUS.LOADING)
+    if(loadingStatus == LOADING_STATUS.LOADING)
       return 'Loading cards, please wait...';
     return 'Cards overview';
   },
@@ -132,11 +71,6 @@ const App = React.createClass({
     const { items, loadingStatus, orderingStatus, loaded, toBeLoaded, totalPrice} = this.props.cards
     return (
       <div>
-        <div className="row">
-          <div className="col-lg-12">
-            <StateList states={this.state.states} handleSaveState={this.handleSaveState} handleLoadState={this.handleLoadState} />
-          </div>
-        </div>
         <h1 className="page-header">{this.getHeaderText()}</h1>
         {loadingStatus == LOADING_STATUS.LOADING && 
           <div>
@@ -188,76 +122,6 @@ const App = React.createClass({
       </div>
     )
   }
-
-/*
-  render: function render() {
-    var that = this;
-    return React.createElement(
-      'div',
-      null,
-      React.createElement('div', {className: 'row'},
-        React.createElement('div', {className: 'col-lg-12'}, 
-          React.createElement(StateList, {states: this.state.states, handleSaveState: this.handleSaveState, handleLoadState: this.handleLoadState}, null)
-        )
-      ),
-      React.createElement(
-        'h1',
-        {className: 'page-header'},
-        this.getHeaderText()
-      ),
-      (this.state.loadingStatus == LOADING_STATUS.LOADING && React.createElement('div', null,
-          React.createElement(ProgressBar, 
-            {
-              stripped: true, 
-              bsStyle: 'success',
-              label: this.state.loaded + ' / ' + this.state.toBeLoaded,
-              now: (this.state.loaded/this.state.toBeLoaded)*100
-            }
-          )
-        )
-      ),
-      (this.state.loadingStatus == LOADING_STATUS.LOADED && 
-        React.createElement('div', {className: 'row'},
-          React.createElement('div', {className: 'col-lg-12 extra-margin'},  
-            React.createElement(Button, {bsStyle: 'default', onClick: this.handleUseCheapest},
-              'Use the cheapest set of cards'
-            )
-          )
-        )
-      ),
-      React.createElement(
-        CardList, 
-        { 
-          items: this.state.items, 
-          handleExpandCard: that.handleExpandCard, 
-          handleAddToCart: that.handleAddToCart,
-          handleRemoveFromCart: that.handleRemoveFromCart
-        }
-      ),
-      (this.state.loadingStatus == LOADING_STATUS.NOT_LOADED && React.createElement(
-          'form',
-          { onSubmit: this.handleSubmit },
-          React.createElement('textarea', { onChange: this.onChange, value: this.state.text }),
-          React.createElement(
-            'div', null,
-            React.createElement('input', { type: "radio", name: "server", onChange: this.onChangeRadio, value: "cerny-rytir" }), " Cerny rytir"
-          ),
-          React.createElement(
-            'div', null,
-            React.createElement('input', { type: "radio", name: "server", onChange: this.onChangeRadio, value: "rishada" }), " Rishada"
-          ),
-          React.createElement(Button, {bsStyle: 'primary', bsSize: 'lg', type: 'submit'}, 'Do the magic!')
-        )
-      ),
-      (this.state.loadingStatus == LOADING_STATUS.LOADED && React.createElement('div', null,
-          React.createElement(Button, {bsStyle: 'primary', bsSize: 'lg', onClick: this.handleOrder}, 
-            'Confirm & order these cards, total: ' + this.state.totalPrice + ',-'
-          )
-        )
-      )
-    );
-  }
-*/
 });
 
 function mapStateToProps(state, ownProps) {
