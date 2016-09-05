@@ -35,7 +35,9 @@ describe('card reducer', () => {
     expect(
       reducer({}, {
         type: types.LOAD_CARDS_REQUEST,
-        toBeLoaded: 5
+        payload: {
+          toBeLoaded: 5
+        }
       })
     ).toEqual(
       {
@@ -64,8 +66,10 @@ describe('card reducer', () => {
         items: [{id: 2}], loaded: 1, toBeLoaded: 2
       }, {
         type: types.CARD_LOADED,
-        card: {
-          id: 3
+        payload: {
+          card: {
+            id: 3
+          }
         }
       })
     ).toEqual(
@@ -82,7 +86,9 @@ describe('card reducer', () => {
         items: [{id: 2, expanded: false}, {id: 3, expanded: false}]
       }, {
         type: types.TOGGLE_EXPAND_CARD,
-        id: 3
+        payload: {
+          id: 3
+        }
       })
     ).toEqual(
       {
@@ -114,12 +120,14 @@ describe('card reducer', () => {
         ]
       }, {
         type: types.ADD_TO_CART,
-        card: {
-          id: 3
-        },
-        mutation: {
-          id: 'mut_1',
-          price: 30
+        payload: {
+          card: {
+            id: 3
+          },
+          mutation: {
+            id: 'mut_1',
+            price: 30
+          }
         }
       })
     ).toEqual(
@@ -170,12 +178,14 @@ describe('card reducer', () => {
         ]
       }, {
         type: types.REMOVE_FROM_CART,
-        card: {
-          id: 3
-        },
-        mutation: {
-          id: 'mut_1',
-          price: 30
+        payload: {
+          card: {
+            id: 3
+          },
+          mutation: {
+            id: 'mut_1',
+            price: 30
+          }
         }
       })
     ).toEqual(

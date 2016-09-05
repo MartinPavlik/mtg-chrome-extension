@@ -49791,7 +49791,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	   value: true
+	  value: true
 	});
 	exports.parseImport = parseImport;
 	exports.loadCards = loadCards;
@@ -49799,6 +49799,10 @@
 	var _jquery = __webpack_require__(437);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _testCardName = __webpack_require__(627);
+
+	var _testCardName2 = _interopRequireDefault(_testCardName);
 
 	var _basicLands = __webpack_require__(438);
 
@@ -49813,111 +49817,118 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var createRequestData = function createRequestData(cardName) {
-	   return Object.assign({}, _config.REQUEST_DATA_TEMPLATE, { jmenokarty: cardName });
+	  return Object.assign({}, _config.REQUEST_DATA_TEMPLATE, { jmenokarty: cardName });
 	};
 
 	/*
 	   Loads HTML for one single card (but multiple mutations
 	*/
 	var loadCardPage = function loadCardPage(cardName, onSuccess, onFail) {
-	   _jquery2.default.ajax({
-	      type: "POST",
-	      url: _config.LOAD_CARD_URL,
-	      data: createRequestData(cardName),
-	      success: function success(data) {
-	         onSuccess(data, cardName);
-	      },
-	      dataType: 'html'
-	   });
+	  _jquery2.default.ajax({
+	    type: "POST",
+	    url: _config.LOAD_CARD_URL,
+	    data: createRequestData(cardName),
+	    success: function success(data) {
+	      onSuccess(data, cardName);
+	    },
+	    dataType: 'html'
+	  });
 	};
 
 	function parseImport(input) {
-	   var lines = input.split('\n');
-	   //console.info(lines);
+	  var lines = input.split('\n');
+	  //console.info(lines);
 
-	   var cards = [];
-	   lines.forEach(function (line, index) {
-	      var tokens = line.split(/\s/);
+	  var cards = [];
+	  lines.forEach(function (line, index) {
+	    // split line into tokens
+	    var tokens = line.split(/\s/);
 
-	      var card = Object.assign({}, _cardTemplate2.default);
+	    var card = Object.assign({}, _cardTemplate2.default);
 
-	      // comment or empty line? skip it
-	      if (!line.trim().length || line.trim().indexOf('//') == 0) {
-	         return;
+	    // comment or empty line? skip it
+	    if (!line.trim().length || line.trim().indexOf('//') == 0) {
+	      return;
+	    }
+
+	    // first token is SB? add the card to the sideboard
+	    if (tokens[0].indexOf('SB:') == 0) {
+	      card.sideboard = true;
+	      tokens = tokens.slice(1);
+	    }
+
+	    // next token is number? it means the count of the card
+	    if (/^\d+$/.test(tokens[0])) {
+	      card.count = parseInt(tokens[0]);
+	      tokens = tokens.slice(1);
+	    }
+
+	    card.name = tokens.join(' ').replace('Æ', 'Ae');
+
+	    var isRestricted = false;
+	    for (var i in _basicLands2.default) {
+	      var name = _basicLands2.default[i];
+	      if (card.name === name) {
+	        alert(card.name + " cards won't be loaded (basic lands are banned).");
+	        isRestricted = true;
+	        break;
 	      }
-
-	      // first token is SB? add the card to the sideboard
-	      if (tokens[0].indexOf('SB:') == 0) {
-	         card.sideboard = true;
-	         tokens = tokens.slice(1);
-	      }
-
-	      // next token is number? it means the count of the card
-	      if (/^\d+$/.test(tokens[0])) {
-	         card.count = parseInt(tokens[0]);
-	         tokens = tokens.slice(1);
-	      }
-
-	      card.name = tokens.join(' ').replace('Æ', 'Ae');
-
-	      var isRestricted = false;
-	      for (var i in _basicLands2.default) {
-	         var name = _basicLands2.default[i];
-	         if (card.name === name) {
-	            alert(card.name + " cards won't be loaded (basic lands are banned).");
-	            isRestricted = true;
-	            break;
-	         }
-	      }
-	      if (!isRestricted) cards.push(card);
-	   });
-	   console.info(cards);
-	   return cards;
+	    }
+	    if (!isRestricted) cards.push(card);
+	  });
+	  console.info(cards);
+	  return cards;
 	};
 
 	var getCardInfo = function getCardInfo(html, originalCard) {
-	   var $html = (0, _jquery2.default)(html);
-	   var $container = (0, _jquery2.default)((0, _jquery2.default)('.kusovkytext tbody', $html)[1]);
-	   console.info($container);
-	   var children = $container.children();
-	   console.info('children:', children);
-	   var chLen = children.length;
-	   var card = originalCard;
-	   card.mutations = [];
-	   for (var i = 0; i < chLen; i += 3) {
-	      var mutation = {};
-	      mutation.imgUrl = _config.DOMAIN + (0, _jquery2.default)('a', children[i]).attr('href');
-	      mutation.name = (0, _jquery2.default)('td div', children[i]).text();
-	      mutation.edition = (0, _jquery2.default)('td:first-child', children[i + 1]).text();
-	      mutation.rarity = (0, _jquery2.default)('td:nth-child(1)', children[i + 2]).text();
-	      mutation.count = parseInt((0, _jquery2.default)('td:nth-child(2)', children[i + 2]).text());
-	      mutation.price = parseInt((0, _jquery2.default)('td:nth-child(3)', children[i + 2]).text());
-	      // init form
-	      mutation.form = {};
-	      var $form = (0, _jquery2.default)('form', children[i + 2]);
-	      console.info($form);
-	      mutation.form.action = $form.attr('action');
-	      mutation.form.carovy_kod = (0, _jquery2.default)('input[name="carovy_kod"]', $form).val();
-	      mutation.form.databaze = (0, _jquery2.default)('input[name="databaze"]', $form).val();
-	      mutation.form.nakupzbozi = (0, _jquery2.default)('input[name="nakupzbozi"]', $form).val();
-	      mutation.form.kusu = (0, _jquery2.default)('input[name="kusu"]', $form).val();
-	      console.info('form: ', mutation.form);
-	      mutation.orderedCount = 0;
-	      mutation.id = mutation.name + i + card.name;
-	      card.mutations.push(mutation);
-	   }
-	   card.loaded = true;
-	   return card;
+	  var $html = (0, _jquery2.default)(html);
+	  var $container = (0, _jquery2.default)((0, _jquery2.default)('.kusovkytext tbody', $html)[1]);
+	  console.info($container);
+	  var children = $container.children();
+	  console.info('children:', children);
+	  var chLen = children.length;
+	  var card = originalCard;
+	  card.mutations = [];
+	  for (var i = 0; i < chLen; i += 3) {
+	    var cardName = (0, _jquery2.default)('td div', children[i]).text();
+	    console.info('for: ', originalCard, cardName, 'split: ', (0, _testCardName.splitIntoNameAndStatus)(cardName));
+	    // check card name
+	    if (!(0, _testCardName2.default)(originalCard.name, (0, _testCardName.splitIntoNameAndStatus)(cardName).name)) {
+	      continue;
+	    }
+	    var mutation = {};
+	    mutation.imgUrl = _config.DOMAIN + (0, _jquery2.default)('a', children[i]).attr('href');
+	    mutation.name = (0, _jquery2.default)('td div', children[i]).text();
+	    mutation.edition = (0, _jquery2.default)('td:first-child', children[i + 1]).text();
+	    mutation.rarity = (0, _jquery2.default)('td:nth-child(1)', children[i + 2]).text();
+	    mutation.count = parseInt((0, _jquery2.default)('td:nth-child(2)', children[i + 2]).text());
+	    mutation.price = parseInt((0, _jquery2.default)('td:nth-child(3)', children[i + 2]).text());
+	    // init form
+	    mutation.form = {};
+	    var $form = (0, _jquery2.default)('form', children[i + 2]);
+	    console.info($form);
+	    mutation.form.action = $form.attr('action');
+	    mutation.form.carovy_kod = (0, _jquery2.default)('input[name="carovy_kod"]', $form).val();
+	    mutation.form.databaze = (0, _jquery2.default)('input[name="databaze"]', $form).val();
+	    mutation.form.nakupzbozi = (0, _jquery2.default)('input[name="nakupzbozi"]', $form).val();
+	    mutation.form.kusu = (0, _jquery2.default)('input[name="kusu"]', $form).val();
+	    console.info('form: ', mutation.form);
+	    mutation.orderedCount = 0;
+	    mutation.id = mutation.name + i + card.name;
+	    card.mutations.push(mutation);
+	  }
+	  card.loaded = true;
+	  return card;
 	};
 
 	function loadCards(cards, cb) {
-	   cards.forEach(function (card, index) {
-	      console.info("Loading: ", card);
-	      loadCardPage(card.name, function (html) {
-	         var loadedCard = getCardInfo(html, card);
-	         cb(loadedCard);
-	      });
-	   });
+	  cards.forEach(function (card, index) {
+	    console.info("Loading: ", card);
+	    loadCardPage(card.name, function (html) {
+	      var loadedCard = getCardInfo(html, card);
+	      cb(loadedCard);
+	    });
+	  });
 	};
 
 /***/ },
@@ -59498,6 +59509,64 @@
 	})(ImportForm);
 
 	exports.default = ImportForm;
+
+/***/ },
+/* 627 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.splitIntoNameAndStatus = splitIntoNameAndStatus;
+	exports.default = testCardName;
+	function splitIntoNameAndStatus(line) {
+	  var tokens = line.split(' - ');
+	  if (tokens.length == 2) {
+	    return {
+	      name: tokens[0],
+	      status: tokens[2]
+	    };
+	  } else {
+	    return {
+	      name: line,
+	      status: undefined
+	    };
+	  }
+	}
+
+	function testCardName(cardName, line) {
+	  var startIndex = line.indexOf(cardName);
+	  if (startIndex == -1) {
+	    return false;
+	  }
+
+	  // any prefix? let's check it
+	  if (startIndex > 0) {
+	    var prefix = line.substr(0, startIndex);
+	    console.info(prefix, prefix.trim().length);
+	    if (prefix.trim().length != 0) {
+	      console.log('not matching previous');
+	      return false;
+	    }
+	  }
+
+	  var endIndex = startIndex + cardName.length;
+	  if (endIndex < line.length) {
+	    var postfix = line.substr(endIndex, line.length);
+	    console.info('postfix:  \'' + postfix + '\'');
+	    if (postfix.trim().length != 0) {
+	      // check if the postifx constains version
+	      var match = postfix.match(/[\s]*\(.*\)[\s]*/);
+	      if (match && match[0] == postfix) {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }
+	  return true;
+	}
 
 /***/ }
 /******/ ]);

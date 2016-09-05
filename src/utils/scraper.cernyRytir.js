@@ -1,5 +1,9 @@
 import $ from 'jquery'
 
+import testCardName, {
+  splitIntoNameAndStatus
+} from './testCardName'
+
 import BASIC_LANDS from '../constants/basicLands'
 import {
   REQUEST_DATA_TEMPLATE, 
@@ -34,6 +38,7 @@ export function parseImport (input) {
    
    var cards = [];
    lines.forEach(function(line, index) {
+      // split line into tokens
       var tokens = line.split(/\s/);
       
       var card = Object.assign({}, CARD_TEMPLATE);
@@ -83,6 +88,17 @@ var getCardInfo = function getCardInfo(html, originalCard) {
    var card = originalCard;
    card.mutations = [];
    for(var i = 0; i < chLen; i+= 3) {
+      const cardName = $('td div', children[i]).text();
+      console.info('for: ', originalCard, cardName, 'split: ', splitIntoNameAndStatus(cardName))
+      // check card name
+      if(! 
+        testCardName(
+          originalCard.name, 
+          splitIntoNameAndStatus(cardName).name
+        )
+      ) {
+        continue;
+      }
       var mutation = {};
       mutation.imgUrl = DOMAIN + $('a', children[i]).attr('href');
       mutation.name = $('td div', children[i]).text();
