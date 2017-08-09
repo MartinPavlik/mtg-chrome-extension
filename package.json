@@ -1,7 +1,11 @@
 {
   "scripts": {
     "test": "mocha --compilers js:babel-register --recursive",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch",
+    "build-prod": "webpack --progress -p",
+    "build-dev": "webpack --progress",
+    "watch-prod": "webpack --progress -p --watch --watch-poll",
+    "watch-dev": "webpack --progress --watch --watch-poll"
   },
   "dependencies": {
     "body-parser": "^1.14.2",

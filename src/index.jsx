@@ -6,15 +6,13 @@ import configureStore from './store/configureStore'
 
 function init() {
    const mountPoint = document.getElementById('app')
-
-   const store = configureStore();
-
+   const store = configureStore()
    render(
       <Provider store={store}>
          <App />
       </Provider>
       ,
       mountPoint
-   );
+   )
 }
-init();
+init()

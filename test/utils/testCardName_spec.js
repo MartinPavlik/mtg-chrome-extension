@@ -28,6 +28,9 @@ describe('testCardName', () =>{
   it('should return true when name and version is given', () => {
     expect(testCardName('Arid Mesa', 'Arid Mesa (BFZ)')).toEqual(true)
   })
+  it('should return true when char \'´\' is used in the name', () => {
+    expect(testCardName('Mishra\'s factory', 'Mishra´s Factory (#4, winter)')).toEqual(true)
+  })
 })
 
 describe('splitIntoNameAndStatus', () => {

@@ -15,7 +15,17 @@ export function splitIntoNameAndStatus(line) {
   }
 }
 
-export default function testCardName(cardName, line) {
+function unifySpecialChars(str) {
+  return str
+    .replace('´', '\'')
+    .replace('Æ', 'Ae')
+}
+
+export default function testCardName(cardNameIn, lineIn) {
+
+  const cardName = unifySpecialChars(cardNameIn);
+  const line = unifySpecialChars(lineIn);
+
   const startIndex = line.indexOf(cardName)
   if(startIndex == -1) {
     return false;
